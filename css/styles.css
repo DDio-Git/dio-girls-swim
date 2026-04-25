@@ -381,6 +381,54 @@ select option { background: var(--deep); }
 }
 @keyframes spinR { to { transform: rotate(360deg); } }
 
+/* ── PIN Screen ── */
+.pin-screen {
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+}
+.pin-screen.hidden { display: none; }
+.pin-content { text-align: center; padding: 40px 20px; width: 100%; max-width: 320px; }
+.pin-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px; letter-spacing: 4px; color: #fff; margin-bottom: 8px;
+}
+.pin-sub { font-size: 14px; color: var(--muted); margin-bottom: 36px; }
+.pin-dots {
+  display: flex; gap: 18px; justify-content: center; margin-bottom: 40px;
+}
+.pin-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid rgba(0,180,216,0.35);
+  transition: all 0.15s;
+}
+.pin-dot.filled { background: var(--water); border-color: var(--water); transform: scale(1.1); }
+.pin-pad {
+  display: grid; grid-template-columns: repeat(3, 76px);
+  gap: 14px; justify-content: center;
+}
+.pin-key {
+  width: 76px; height: 76px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 50%; color: #fff;
+  font-family: 'Barlow', sans-serif; font-size: 26px; font-weight: 400;
+  cursor: pointer; transition: all 0.12s; user-select: none;
+}
+.pin-key:hover  { background: rgba(0,180,216,0.12); border-color: rgba(0,180,216,0.4); }
+.pin-key:active { background: rgba(0,180,216,0.22); transform: scale(0.94); }
+.pin-del { font-size: 20px; color: var(--muted); }
+.pin-key-spacer { width: 76px; height: 76px; }
+.pin-error { margin-top: 22px; font-size: 13px; color: #ff6b2b; min-height: 20px; }
+.pin-change-btn {
+  width: 100%; margin-top: 14px; padding: 10px;
+  background: transparent; border: 1px dashed rgba(0,180,216,0.2);
+  color: var(--muted); border-radius: 10px;
+  font-family: 'Barlow', sans-serif; font-size: 13px; cursor: pointer;
+  transition: all 0.2s;
+}
+.pin-change-btn:hover { border-color: rgba(0,180,216,0.4); color: var(--water); }
+
 /* ── Responsive ── */
 @media (max-width: 480px) {
   .stat-row { grid-template-columns: repeat(2, 1fr); }

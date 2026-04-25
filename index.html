@@ -22,6 +22,36 @@
 </head>
 <body>
 
+<!-- PIN Lock Screen -->
+<div class="pin-screen" id="pinScreen">
+  <div class="pin-content">
+    <div class="season-pill" style="margin-bottom:24px">🏊 Dio Girls Swim</div>
+    <div class="pin-title" id="pinTitle">FAMILY PIN</div>
+    <div class="pin-sub" id="pinSub">Enter your PIN to continue</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-key" data-n="1">1</button>
+      <button class="pin-key" data-n="2">2</button>
+      <button class="pin-key" data-n="3">3</button>
+      <button class="pin-key" data-n="4">4</button>
+      <button class="pin-key" data-n="5">5</button>
+      <button class="pin-key" data-n="6">6</button>
+      <button class="pin-key" data-n="7">7</button>
+      <button class="pin-key" data-n="8">8</button>
+      <button class="pin-key" data-n="9">9</button>
+      <div class="pin-key-spacer"></div>
+      <button class="pin-key" data-n="0">0</button>
+      <button class="pin-key pin-del" id="pinDel">⌫</button>
+    </div>
+    <div class="pin-error" id="pinError"></div>
+  </div>
+</div>
+
 <div class="ripple-bg">
   <div class="ripple"></div>
   <div class="ripple"></div>
@@ -146,6 +176,7 @@
       <button class="modal-save" id="modalSave">SAVE KEYS</button>
       <button class="modal-cancel" id="modalCancel">Cancel</button>
     </div>
+    <button class="pin-change-btn" id="changePinBtn">🔒 Change Family PIN</button>
   </div>
 </div>
 

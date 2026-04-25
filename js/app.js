@@ -1,4 +1,4 @@
-import { subscribeToData, saveSwimData } from './firebase.js';
+import { subscribeToData, saveSwimData, loadPin, savePin } from './firebase.js';
 import { ocrHeatSheet, generateHypeText, generateVoice } from './api.js';
 
 // ── Constants ─────────────────────────────────────────────
@@ -369,6 +369,106 @@ function render() {
   }).join('');
 }
 
+// ── PIN Lock ──────────────────────────────────────────────
+let pinBuffer = '';
+let pinMode = 'enter';       // 'enter' | 'create' | 'confirm'
+let pinFirstEntry = '';
+
+async function initPin() {
+  if (localStorage.getItem('pinVerified') === '1') {
+    hidePinScreen();
+    return;
+  }
+  const stored = await loadPin();
+  if (stored) {
+    pinMode = 'enter';
+    document.getElementById('pinTitle').textContent = 'FAMILY PIN';
+    document.getElementById('pinSub').textContent   = 'Enter your PIN to continue';
+  } else {
+    pinMode = 'create';
+    document.getElementById('pinTitle').textContent = 'SET FAMILY PIN';
+    document.getElementById('pinSub').textContent   = 'Choose a 4-digit PIN for your family';
+  }
+}
+
+function hidePinScreen() {
+  document.getElementById('pinScreen').classList.add('hidden');
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById(`pd${i}`).classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+
+async function handlePinKey(n) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += n;
+  updatePinDots();
+  document.getElementById('pinError').textContent = '';
+  if (pinBuffer.length === 4) await submitPin();
+}
+
+function handlePinDel() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  updatePinDots();
+}
+
+async function submitPin() {
+  if (pinMode === 'enter') {
+    const stored = await loadPin();
+    if (pinBuffer === stored) {
+      localStorage.setItem('pinVerified', '1');
+      hidePinScreen();
+    } else {
+      document.getElementById('pinError').textContent = 'Wrong PIN — try again';
+      pinBuffer = '';
+      updatePinDots();
+    }
+
+  } else if (pinMode === 'create') {
+    pinFirstEntry = pinBuffer;
+    pinBuffer     = '';
+    updatePinDots();
+    pinMode = 'confirm';
+    document.getElementById('pinSub').textContent = 'Confirm your PIN';
+
+  } else if (pinMode === 'confirm') {
+    if (pinBuffer === pinFirstEntry) {
+      await savePin(pinBuffer);
+      localStorage.setItem('pinVerified', '1');
+      hidePinScreen();
+      toast('PIN set ✓');
+    } else {
+      document.getElementById('pinError').textContent = "PINs didn't match — try again";
+      pinBuffer = pinFirstEntry = '';
+      updatePinDots();
+      pinMode = 'create';
+      document.getElementById('pinSub').textContent = 'Choose a 4-digit PIN for your family';
+    }
+  }
+}
+
+function startChangePin() {
+  closeSettings();
+  localStorage.removeItem('pinVerified');
+  pinBuffer = pinFirstEntry = '';
+  pinMode = 'create';
+  updatePinDots();
+  document.getElementById('pinTitle').textContent  = 'CHANGE PIN';
+  document.getElementById('pinSub').textContent    = 'Choose a new 4-digit PIN';
+  document.getElementById('pinError').textContent  = '';
+  document.getElementById('pinScreen').classList.remove('hidden');
+}
+
+function setupPinListeners() {
+  document.querySelectorAll('.pin-key[data-n]').forEach(btn =>
+    btn.addEventListener('click', () => handlePinKey(btn.dataset.n))
+  );
+  document.getElementById('pinDel').addEventListener('click', handlePinDel);
+  document.getElementById('changePinBtn').addEventListener('click', startChangePin);
+}
+
 // ── Modal / Toast ─────────────────────────────────────────
 function openSettings() {
   document.getElementById('anKeyInput').value = anKey || '';
@@ -418,6 +518,8 @@ function setupListeners() {
   document.getElementById('playBtn').addEventListener('click', playHype);
   document.getElementById('copyBtn').addEventListener('click', copyHype);
 
+  setupPinListeners();
+
   // Event delegation for dynamically-rendered delete buttons
   document.getElementById('meetsList').addEventListener('click', e => {
     const btn = e.target.closest('.del-btn');
@@ -450,6 +552,7 @@ function init() {
   });
 
   setSwimmer('everleigh');
+  initPin(); // async — shows/hides PIN screen on top of already-rendered app
 }
 
 init();
