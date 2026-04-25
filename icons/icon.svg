@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#08111f"/>
+
+  <!-- Subtle radial glow -->
+  <radialGradient id="glow" cx="50%" cy="40%" r="60%">
+    <stop offset="0%" stop-color="#00b4d8" stop-opacity="0.18"/>
+    <stop offset="100%" stop-color="#08111f" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="512" height="512" fill="url(#glow)"/>
+
+  <!-- Wave layers -->
+  <path d="M 0 390 Q 64 360 128 390 T 256 390 T 384 390 T 512 390 L 512 512 L 0 512 Z"
+        fill="#00b4d8" opacity="0.10"/>
+  <path d="M 0 415 Q 64 385 128 415 T 256 415 T 384 415 T 512 415 L 512 512 L 0 512 Z"
+        fill="#00b4d8" opacity="0.16"/>
+  <path d="M 0 440 Q 64 410 128 440 T 256 440 T 384 440 T 512 440 L 512 512 L 0 512 Z"
+        fill="#00b4d8" opacity="0.22"/>
+
+  <!-- "DG" main text -->
+  <text x="256" y="300"
+        font-family="Arial Black, Impact, sans-serif"
+        font-size="230"
+        font-weight="900"
+        fill="#ffffff"
+        text-anchor="middle"
+        letter-spacing="-8">DG</text>
+
+  <!-- "SWIM" sub-label -->
+  <text x="256" y="370"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="52"
+        font-weight="700"
+        fill="#00b4d8"
+        text-anchor="middle"
+        letter-spacing="18">SWIM</text>
+</svg>

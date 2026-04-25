@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dio Girls Swim Stats</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#08111f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Swim Stats">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:ital,wght@0,300;0,400;0,500;1,300&display=swap">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="ripple-bg">
+  <div class="ripple"></div>
+  <div class="ripple"></div>
+  <div class="ripple"></div>
+</div>
+
+<div class="wrap">
+
+  <div class="demo-banner" id="demoBanner">
+    <span>🎬</span>
+    <div><strong>DEMO MODE</strong> — Sample data preloaded for both girls. Try the hype reel!</div>
+    <button id="resetDemoBtn">Reset</button>
+  </div>
+
+  <header>
+    <div class="season-pill">Summer 2025 · Live Season</div>
+    <h1>DIO GIRLS<em>SWIM STATS</em></h1>
+    <p class="tagline">Upload heat sheets · track every PR · get the hype reel</p>
+  </header>
+
+  <div class="settings-bar">
+    <button class="settings-btn" id="settingsBtn">⚙ API Keys</button>
+  </div>
+
+  <div class="swimmer-tabs">
+    <div class="tab ev-active" id="tabEv">
+      <span class="tab-name">Everleigh</span>
+      <span class="tab-sub">Age 8 · 2nd Grade</span>
+    </div>
+    <div class="tab" id="tabPe">
+      <span class="tab-name">Penny</span>
+      <span class="tab-sub">Age 6 · 1st Grade</span>
+    </div>
+  </div>
+
+  <div class="upload-zone" id="uploadZone">
+    <span class="upload-icon">📸</span>
+    <p>Snap or upload the heat sheet / results</p>
+    <p class="upload-hint">JPG · PNG · PDF — Claude reads the times automatically</p>
+    <button class="upload-cta" id="choosePhotoBtn">Choose Photo</button>
+  </div>
+  <input type="file" id="fileInput" accept="image/*,application/pdf">
+
+  <div class="processing" id="processing">
+    <span class="spin"></span> Reading heat sheet with AI...
+  </div>
+  <div class="ai-note" id="aiNote"></div>
+
+  <div class="meet-form" id="meetForm">
+    <div class="form-title">📋 New Meet</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Meet Name</label>
+        <input id="meetName" type="text" placeholder="e.g. Westwood Invite">
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input id="meetDate" type="date">
+      </div>
+    </div>
+    <label class="events-label">Events &amp; Times</label>
+    <div class="event-rows" id="eventRows"></div>
+    <button class="add-row-btn" id="addRowBtn">+ Add Event</button>
+    <button class="save-btn" id="saveMeetBtn">SAVE MEET →</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <div id="statsWrap" style="display:none">
+    <div class="section-label" id="statsLabel">Everleigh · Season Stats</div>
+    <div class="stat-row" id="statRow"></div>
+    <div class="section-label">Event Progress</div>
+    <div class="event-cards" id="eventCards"></div>
+
+    <div class="hype-wrap">
+      <button class="hype-generate-btn" id="hypeBtn">
+        🎙 GENERATE HYPE REEL
+      </button>
+      <div class="hype-card" id="hypeCard">
+        <div class="hype-card-label">Hype Reel — <span id="hypeName"></span></div>
+        <div class="hype-body" id="hypeBody"></div>
+        <div class="hype-actions">
+          <button class="hype-btn play" id="playBtn">▶ Play SportsCenter Read</button>
+          <button class="hype-btn copy" id="copyBtn">📋 Copy</button>
+        </div>
+        <div class="audio-status" id="audioStatus">
+          <div class="audio-bars">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div>
+          </div>
+          <span id="audioStatusText">Generating voice...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+  </div>
+
+  <div class="meets-section">
+    <div class="section-label" id="meetsLabel">Everleigh · Meets</div>
+    <div id="meetsList"></div>
+  </div>
+
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h3>API KEYS</h3>
+    <p>Saved on this device only — each phone needs these once.</p>
+    <label class="modal-label">Anthropic API Key</label>
+    <input type="password" id="anKeyInput" placeholder="sk-ant-...">
+    <p class="modal-hint">
+      <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API Keys — for heat sheet scanning &amp; hype reel
+    </p>
+    <label class="modal-label">ElevenLabs API Key</label>
+    <input type="password" id="elKeyInput" placeholder="Paste key here..." autocomplete="off">
+    <p class="modal-hint">
+      <a href="https://elevenlabs.io" target="_blank">elevenlabs.io</a> → Profile → API Keys — for SportsCenter voice
+    </p>
+    <div class="modal-btns">
+      <button class="modal-save" id="modalSave">SAVE KEYS</button>
+      <button class="modal-cancel" id="modalCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
