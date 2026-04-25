@@ -12,10 +12,15 @@ let elKey         = localStorage.getItem(KEY_EL) || '';
 
 // ── Data ─────────────────────────────────────────────────
 subscribeToData(data => {
-  if (!data) return;
-  appData = data;
   document.getElementById('loadingState').style.display = 'none';
-  document.getElementById('dashContent').style.display  = 'block';
+  if (!data) {
+    document.getElementById('dashContent').innerHTML =
+      '<div style="text-align:center;padding:60px 20px;color:rgba(221,238,246,0.3);font-size:14px">Season data loading — check back soon 🏊</div>';
+    document.getElementById('dashContent').style.display = 'block';
+    return;
+  }
+  appData = data;
+  document.getElementById('dashContent').style.display = 'block';
   render();
   loadHype();
 });
