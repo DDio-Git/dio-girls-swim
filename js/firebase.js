@@ -30,6 +30,15 @@ export async function savePin(pin) {
   await set(pinRef, pin);
 }
 
+export async function saveHypeReel(swimmer, text) {
+  await set(ref(db, `hypeReels/${swimmer}`), text);
+}
+
+export async function loadHypeReel(swimmer) {
+  const snapshot = await get(ref(db, `hypeReels/${swimmer}`));
+  return snapshot.exists() ? snapshot.val() : null;
+}
+
 // Fires immediately with current value, then on every remote change
 export function subscribeToData(callback) {
   onValue(dataRef, snapshot => {

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Dio Girls Swim Stats</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#08111f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Swim Stats">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:ital,wght@0,300;0,400;0,500;1,300&display=swap">
+
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="ripple-bg">
+  <div class="ripple"></div>
+  <div class="ripple"></div>
+  <div class="ripple"></div>
+</div>
+
+<div class="wrap">
+
+  <header>
+    <div class="season-pill">Summer 2025 · Live Season</div>
+    <h1>DIO GIRLS<em>SWIM STATS</em></h1>
+  </header>
+
+  <!-- Swimmer Tabs -->
+  <div class="swimmer-tabs">
+    <div class="tab ev-active" id="tabEv">
+      <span class="tab-name">Everleigh</span>
+      <span class="tab-sub">Age 8 · 2nd Grade</span>
+    </div>
+    <div class="tab" id="tabPe">
+      <span class="tab-name">Penny</span>
+      <span class="tab-sub">Age 6 · 1st Grade</span>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div id="loadingState" class="loading-state">
+    <div class="spin"></div> Loading season data...
+  </div>
+
+  <!-- Dashboard content (hidden until data loads) -->
+  <div id="dashContent" style="display:none">
+
+    <!-- Big stat numbers -->
+    <div class="stat-row" id="statRow"></div>
+
+    <!-- Latest Meet -->
+    <div class="card-section" id="latestMeetSection">
+      <div class="section-label">Latest Meet</div>
+      <div class="latest-card" id="latestCard"></div>
+    </div>
+
+    <!-- Season Bests -->
+    <div class="card-section" id="seasonBestsSection">
+      <div class="section-label">Season Bests</div>
+      <div id="bestsList"></div>
+    </div>
+
+    <!-- Hype Reel -->
+    <div class="hype-section" id="hypeSection">
+      <button class="hype-play-btn" id="hypePlayBtn">
+        ▶ Play <span id="hypeSwimmerName">Everleigh</span>'s Hype Reel
+      </button>
+      <div class="no-hype" id="noHype" style="display:none">
+        Hype reel coming soon — check back after the next meet 🏊
+      </div>
+      <div class="audio-status" id="audioStatus">
+        <div class="audio-bars">
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="bar"></div><div class="bar"></div>
+        </div>
+        <span id="audioStatusText">Generating voice...</span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Settings (ElevenLabs key only) -->
+<button class="settings-fab" id="settingsBtn" title="Settings">⚙</button>
+
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h3>VOICE KEY</h3>
+    <p>Enter your ElevenLabs key to enable hype reel playback.</p>
+    <input type="password" id="elKeyInput" placeholder="Paste key here..." autocomplete="off">
+    <p class="modal-hint">
+      <a href="https://elevenlabs.io" target="_blank">elevenlabs.io</a> → Profile → API Keys
+    </p>
+    <div class="modal-btns">
+      <button class="modal-save" id="modalSave">SAVE</button>
+      <button class="modal-cancel" id="modalCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

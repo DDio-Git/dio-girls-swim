@@ -1,4 +1,4 @@
-import { subscribeToData, saveSwimData, loadPin, savePin } from './firebase.js';
+import { subscribeToData, saveSwimData, loadPin, savePin, saveHypeReel } from './firebase.js';
 import { ocrHeatSheet, generateHypeText, generateVoice } from './api.js';
 
 // ── Constants ─────────────────────────────────────────────
@@ -200,6 +200,7 @@ async function genHype() {
   try {
     const txt = await generateHypeText(name, age, summary, anKey);
     currentHype = txt;
+    saveHypeReel(currentSwimmer, txt); // push to Firebase so dashboard can play it
     document.getElementById('hypeName').textContent = name;
     document.getElementById('hypeBody').textContent = txt;
     card.style.display = 'block';
