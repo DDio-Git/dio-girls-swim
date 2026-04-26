@@ -206,7 +206,7 @@ async function genHype() {
     card.style.display = 'block';
     card.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch(e) {
-    toast('Could not generate — try again.');
+    toast('Error: ' + (e.message || JSON.stringify(e)));
   }
 
   btn.disabled  = false;
