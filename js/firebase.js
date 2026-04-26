@@ -14,20 +14,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const dataRef = ref(db, 'swimData');
-const pinRef  = ref(db, 'appPin');
 
 // Stores the entire appData object as a JSON string to avoid Firebase array quirks
 export async function saveSwimData(data) {
   await set(dataRef, { json: JSON.stringify(data) });
-}
-
-export async function loadPin() {
-  const snapshot = await get(pinRef);
-  return snapshot.exists() ? snapshot.val() : null;
-}
-
-export async function savePin(pin) {
-  await set(pinRef, pin);
 }
 
 export async function saveHypeReel(swimmer, text) {
