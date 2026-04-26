@@ -383,21 +383,29 @@ async function handlePinKey(n) {
   pinBuffer += n;
   updatePinDots();
   document.getElementById('pinError').textContent = '';
+  const enterBtn = document.getElementById('pinEnter');
+  if (enterBtn) enterBtn.disabled = pinBuffer.length < 4;
   if (pinBuffer.length === 4) await submitPin();
 }
 
 function handlePinDel() {
   pinBuffer = pinBuffer.slice(0, -1);
   updatePinDots();
+  const enterBtn = document.getElementById('pinEnter');
+  if (enterBtn) enterBtn.disabled = pinBuffer.length < 4;
 }
 
 async function submitPin() {
+  const enterBtn = document.getElementById('pinEnter');
+  if (enterBtn) enterBtn.disabled = true;
   if (pinMode === 'enter') {
+    document.getElementById('pinSub').textContent = 'Checking…';
     const stored = await loadPin();
     if (pinBuffer === stored) {
       localStorage.setItem('pinVerified', '1');
       hidePinScreen();
     } else {
+      document.getElementById('pinSub').textContent = 'Enter your PIN to continue';
       document.getElementById('pinError').textContent = 'Wrong PIN — try again';
       pinBuffer = '';
       updatePinDots();
@@ -443,6 +451,7 @@ function setupPinListeners() {
     btn.addEventListener('click', () => handlePinKey(btn.dataset.n))
   );
   document.getElementById('pinDel').addEventListener('click', handlePinDel);
+  document.getElementById('pinEnter').addEventListener('click', () => { if (pinBuffer.length === 4) submitPin(); });
   document.getElementById('changePinBtn').addEventListener('click', startChangePin);
 }
 

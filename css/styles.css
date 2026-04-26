@@ -418,7 +418,9 @@ select option { background: var(--deep); }
 .pin-key:hover  { background: rgba(255,208,0,0.12); border-color: rgba(255,208,0,0.4); }
 .pin-key:active { background: rgba(255,208,0,0.22); transform: scale(0.94); }
 .pin-del { font-size: 20px; color: var(--muted); }
-.pin-key-spacer { width: 76px; height: 76px; }
+.pin-enter { font-size: 14px; font-weight: 700; letter-spacing: 1px; color: var(--muted); }
+.pin-enter:not(:disabled) { background: rgba(255,208,0,0.12); border-color: var(--water); color: var(--water); }
+.pin-enter:disabled { opacity: 0.3; cursor: default; }
 .pin-error { margin-top: 22px; font-size: 13px; color: #ff6b2b; min-height: 20px; }
 .pin-change-btn {
   width: 100%; margin-top: 14px; padding: 10px;
