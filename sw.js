@@ -1,4 +1,4 @@
-const CACHE = 'dio-swim-v1';
+const CACHE = 'dio-swim-v2';
 
 const STATIC = [
   '/',
