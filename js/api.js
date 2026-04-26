@@ -1,20 +1,9 @@
-const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
-const ANTHROPIC_VERSION = '2023-06-01';
 const MODEL = 'claude-sonnet-4-6';
 
-function anthropicHeaders(apiKey) {
-  return {
-    'Content-Type': 'application/json',
-    'x-api-key': apiKey,
-    'anthropic-version': ANTHROPIC_VERSION,
-    'anthropic-dangerous-allow-browser': 'true'
-  };
-}
-
-export async function ocrHeatSheet(imageBase64, mimeType, swimmerName, apiKey) {
-  const res = await fetch(ANTHROPIC_URL, {
+export async function ocrHeatSheet(imageBase64, mimeType, swimmerName) {
+  const res = await fetch('/.netlify/functions/anthropic', {
     method: 'POST',
-    headers: anthropicHeaders(apiKey),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: MODEL,
       max_tokens: 1000,
@@ -33,7 +22,7 @@ If nothing found: {"events":[],"notes":"No swim times found"}` }
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || `Anthropic error ${res.status}`);
+    throw new Error(err.error?.message || `API error ${res.status}`);
   }
 
   const d = await res.json();
@@ -45,10 +34,10 @@ If nothing found: {"events":[],"notes":"No swim times found"}` }
   }
 }
 
-export async function generateHypeText(name, age, meetsSummary, apiKey) {
-  const res = await fetch(ANTHROPIC_URL, {
+export async function generateHypeText(name, age, meetsSummary) {
+  const res = await fetch('/.netlify/functions/anthropic', {
     method: 'POST',
-    headers: anthropicHeaders(apiKey),
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: MODEL,
       max_tokens: 1000,
@@ -73,21 +62,19 @@ Rules:
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || `Anthropic error ${res.status}`);
+    throw new Error(err.error?.message || `API error ${res.status}`);
   }
 
   const d = await res.json();
   return d.content?.find(b => b.type === 'text')?.text || 'Could not generate.';
 }
 
-export async function generateVoice(text, elKey, voiceId) {
-  const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+export async function generateVoice(text, voiceId) {
+  const res = await fetch('/.netlify/functions/elevenlabs', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'xi-api-key': elKey
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      voiceId,
       text,
       model_id: 'eleven_turbo_v2',
       voice_settings: { stability: 0.45, similarity_boost: 0.82, style: 0.35, use_speaker_boost: true }
@@ -96,7 +83,7 @@ export async function generateVoice(text, elKey, voiceId) {
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail?.message || 'ElevenLabs error — check your key');
+    throw new Error(err.detail?.message || `Voice error ${res.status}`);
   }
 
   return await res.blob();

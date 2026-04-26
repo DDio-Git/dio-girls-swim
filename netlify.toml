@@ -1,5 +1,6 @@
 [build]
   publish = "."
+  functions = "netlify/functions"
 
 # Never cache the service worker — browsers must always get the latest version
 [[headers]]

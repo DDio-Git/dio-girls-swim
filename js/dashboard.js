@@ -2,13 +2,11 @@ import { subscribeToData, loadHypeReel } from './firebase.js';
 import { generateVoice } from './api.js';
 
 const VOICE_ID = 'JBFqnCBsd6RMkjVDRZzb';
-const KEY_EL   = 'dioElKey-v1';
 
-let appData       = null;
+let appData        = null;
 let currentSwimmer = 'everleigh';
-let currentHype   = '';
-let currentAudio  = null;
-let elKey         = localStorage.getItem(KEY_EL) || '';
+let currentHype    = '';
+let currentAudio   = null;
 
 // ── Data ─────────────────────────────────────────────────
 subscribeToData(data => {
@@ -172,8 +170,6 @@ async function playHype() {
     return;
   }
 
-  if (!elKey) { openSettings(); toast('Enter your ElevenLabs key first'); return; }
-
   const playBtn   = document.getElementById('hypePlayBtn');
   const status    = document.getElementById('audioStatus');
   const statusTxt = document.getElementById('audioStatusText');
@@ -184,7 +180,7 @@ async function playHype() {
   statusTxt.textContent = 'Generating voice...';
 
   try {
-    const blob = await generateVoice(currentHype, elKey, VOICE_ID);
+    const blob = await generateVoice(currentHype, VOICE_ID);
     const url  = URL.createObjectURL(blob);
     currentAudio = new Audio(url);
     statusTxt.textContent = '🎙 Now playing...';
@@ -205,23 +201,6 @@ async function playHype() {
   }
 }
 
-// ── Settings ──────────────────────────────────────────────
-function openSettings() {
-  document.getElementById('elKeyInput').value = elKey || '';
-  document.getElementById('settingsModal').classList.add('open');
-}
-function closeSettings() {
-  document.getElementById('settingsModal').classList.remove('open');
-}
-function saveKey() {
-  const val = document.getElementById('elKeyInput').value.trim();
-  if (!val) { toast('Paste your key first'); return; }
-  elKey = val;
-  localStorage.setItem(KEY_EL, val);
-  closeSettings();
-  toast('Key saved ✓');
-}
-
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -233,8 +212,5 @@ function toast(msg) {
 document.getElementById('tabEv').addEventListener('click', () => setSwimmer('everleigh'));
 document.getElementById('tabPe').addEventListener('click', () => setSwimmer('penny'));
 document.getElementById('hypePlayBtn').addEventListener('click', playHype);
-document.getElementById('settingsBtn').addEventListener('click', openSettings);
-document.getElementById('modalSave').addEventListener('click', saveKey);
-document.getElementById('modalCancel').addEventListener('click', closeSettings);
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});

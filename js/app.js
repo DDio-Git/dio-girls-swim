@@ -3,8 +3,6 @@ import { ocrHeatSheet, generateHypeText, generateVoice } from './api.js';
 
 // ── Constants ─────────────────────────────────────────────
 const VOICE_ID = 'JBFqnCBsd6RMkjVDRZzb'; // George — deep, authoritative
-const KEY_EL   = 'dioElKey-v1';
-const KEY_AN   = 'dioAnthropicKey-v1';
 
 const EVENTS = [
   '25 Free','50 Free','100 Free','200 Free','400 Free',
@@ -42,9 +40,7 @@ const DEMO_DATA = {
 };
 
 // ── State ─────────────────────────────────────────────────
-let appData       = JSON.parse(JSON.stringify(DEMO_DATA));
-let elKey         = '';
-let anKey         = '';
+let appData        = JSON.parse(JSON.stringify(DEMO_DATA));
 let currentSwimmer = 'everleigh';
 let currentHype   = '';
 let currentAudio  = null;
@@ -58,22 +54,6 @@ async function resetDemo() {
   appData = JSON.parse(JSON.stringify(DEMO_DATA));
   await persist();
   toast('Demo data reset 🔄');
-}
-
-// ── Keys ──────────────────────────────────────────────────
-function loadKeys() {
-  elKey = localStorage.getItem(KEY_EL) || '';
-  anKey = localStorage.getItem(KEY_AN) || '';
-}
-
-function saveKeys() {
-  const anInput = document.getElementById('anKeyInput').value.trim();
-  const elInput = document.getElementById('elKeyInput').value.trim();
-  if (!anInput && !elInput) { toast('Paste at least one key'); return; }
-  if (anInput) { anKey = anInput; localStorage.setItem(KEY_AN, anInput); }
-  if (elInput) { elKey = elInput; localStorage.setItem(KEY_EL, elInput); }
-  closeSettings();
-  toast('Keys saved ✓');
 }
 
 // ── Swimmer Tabs ──────────────────────────────────────────
@@ -96,8 +76,6 @@ function handleDrop(e) {
 }
 
 async function processFile(file) {
-  if (!anKey) { openSettings(); toast('Enter your Anthropic key first'); return; }
-
   const proc = document.getElementById('processing');
   const note = document.getElementById('aiNote');
   proc.style.display = 'flex';
@@ -107,7 +85,7 @@ async function processFile(file) {
     const b64 = await toBase64(file);
     const mt  = file.type || 'image/jpeg';
     const who = currentSwimmer === 'everleigh' ? 'Everleigh (age 8)' : 'Penny (age 6)';
-    const parsed = await ocrHeatSheet(b64, mt, who, anKey);
+    const parsed = await ocrHeatSheet(b64, mt, who);
     proc.style.display = 'none';
     prefillForm(parsed);
     if (parsed.notes) { note.textContent = '🤖 ' + parsed.notes; note.style.display = 'block'; }
@@ -185,7 +163,6 @@ async function deleteMeet(id) {
 async function genHype() {
   const meets = appData[currentSwimmer].meets;
   if (!meets.length) { toast('Add some meets first!'); return; }
-  if (!anKey)        { openSettings(); toast('Enter your Anthropic key first'); return; }
 
   const btn  = document.getElementById('hypeBtn');
   const card = document.getElementById('hypeCard');
@@ -198,7 +175,7 @@ async function genHype() {
   const summary = buildMeetSummary(meets);
 
   try {
-    const txt = await generateHypeText(name, age, summary, anKey);
+    const txt = await generateHypeText(name, age, summary);
     currentHype = txt;
     saveHypeReel(currentSwimmer, txt); // push to Firebase so dashboard can play it
     document.getElementById('hypeName').textContent = name;
@@ -232,7 +209,6 @@ function buildMeetSummary(meets) {
 
 async function playHype() {
   if (!currentHype) { toast('Generate the hype reel first!'); return; }
-  if (!elKey)       { openSettings(); return; }
 
   const playBtn   = document.getElementById('playBtn');
   const status    = document.getElementById('audioStatus');
@@ -251,7 +227,7 @@ async function playHype() {
   statusTxt.textContent = 'Generating voice with ElevenLabs...';
 
   try {
-    const blob = await generateVoice(currentHype, elKey, VOICE_ID);
+    const blob = await generateVoice(currentHype, VOICE_ID);
     const url  = URL.createObjectURL(blob);
     currentAudio = new Audio(url);
     statusTxt.textContent = '🎙 Now playing...';
@@ -472,8 +448,6 @@ function setupPinListeners() {
 
 // ── Modal / Toast ─────────────────────────────────────────
 function openSettings() {
-  document.getElementById('anKeyInput').value = anKey || '';
-  document.getElementById('elKeyInput').value = elKey || '';
   document.getElementById('settingsModal').classList.add('open');
 }
 
@@ -512,7 +486,6 @@ function setupListeners() {
   document.getElementById('resetDemoBtn').addEventListener('click', resetDemo);
 
   document.getElementById('settingsBtn').addEventListener('click', openSettings);
-  document.getElementById('modalSave').addEventListener('click', saveKeys);
   document.getElementById('modalCancel').addEventListener('click', closeSettings);
 
   document.getElementById('hypeBtn').addEventListener('click', genHype);
@@ -537,7 +510,6 @@ function registerSW() {
 
 // ── Init ──────────────────────────────────────────────────
 function init() {
-  loadKeys();
   setupListeners();
   registerSW();
 
